@@ -1,7 +1,9 @@
 <?php
 class SCS{
 
-    public function __construct($SCS = true, $https = false, $log = false){
+    private $SCS_CONFIG;
+
+    public function __construct($SCS = true, $https = false, $log = false, $config = false){
         /*
          * Currently in dev
          */
@@ -13,6 +15,10 @@ class SCS{
 
             if($log){
                 $this->LOG_REQUEST();
+            }
+
+            if($config != false && is_array($config)){
+                $this->SCS_CONFIG = $config;
             }
 
         }
@@ -31,13 +37,29 @@ class SCS{
          */
         $LogFile = fopen('log/request_log.txt', 'r+');
         $LogFileData = fgets($LogFile);
-        fputs($LogFile, $LogFileData.';'.base64_encode($_SERVER['REMOTE_ADDR']));
+        fputs($LogFile, ';'.base64_encode($_SERVER['REMOTE_ADDR']));
         fclose($LogFile);
     }
 
-    public function LOG_OPEN(){
+    public function LOG_OPEN($listing_json = false){
         /*
          * Wait please
          */
+        $LogFile = fopen('log/request_log.txt', 'r+');
+        $LogFileData = fgets($LogFile);
+
+        $extract = explode(';', $LogFileData);
+
+        if(!$listing_json){
+            echo 'TOTAL IP : '.count($extract).'<br><br>';
+
+            foreach($extract as $value){
+                echo base64_decode($value).'<br>';
+            }
+        } else {
+            echo json_encode($extract);
+        }
+
+        fclose($LogFile);
     }
 }
