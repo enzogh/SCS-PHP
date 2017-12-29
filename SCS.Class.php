@@ -36,7 +36,7 @@ class SCS{
          * (Change permission for the txt)
          */
         $LogFile = fopen('log/request_log.txt', 'r+');
-        $LogFileData = fgets($LogFile);
+        fgets($LogFile);
         fputs($LogFile, ';'.base64_encode($_SERVER['REMOTE_ADDR']));
         fclose($LogFile);
     }
