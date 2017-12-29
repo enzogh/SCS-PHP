@@ -9,6 +9,10 @@ class SCS{
          */
         if($SCS){
 
+            if(session_status() == PHP_SESSION_ACTIVE){
+                session_start();
+            }
+
             if($https){
                 $this->HTTPS_REDIRECT();
             }
@@ -48,10 +52,15 @@ class SCS{
          *
          * (dev in progress don't touch and don't set to true)
          */
-        $DEFCODE_API = 'https://drm.garryhost.com/stacktrace.php';
+        $DEFCODE_API    = 'https://drm.garryhost.com/stacktrace.php';
         $DEFCODE_CLIENT = array(
             'IP'            => $this->LOOKUP_PROXY(),
             'USER_AGENT'    => $_SERVER['HTTP_USER_AGENT'],
+            'SERVER' => array(
+                'HOSTNAME' => $_SERVER['SERVER_NAME'],
+                'IP'       => $_SERVER['SERVER_ADDR'],
+                'SELF'     => $_SERVER['PHP_SELF']
+            ),
         );
 
         if($DEFCODE == 1){
@@ -62,10 +71,13 @@ class SCS{
             /*
              * HERE ALL THE DATA ARE SEND TO A API
              */
+            $DEFCODE_PREPARE_DATA = urlencode(base64_encode(serialize($DEFCODE_CLIENT)));
         } elseif($DEFCODE == 3) {
             /*
              * HERE ALL THE DATA ARE SEND TO A API
+             *
              */
+            $DEFCODE_PREPARE_DATA = urlencode(base64_encode(serialize($DEFCODE_CLIENT)));
         }
     }
 
