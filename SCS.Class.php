@@ -27,7 +27,17 @@ class SCS{
     private function LOG_REQUEST(){
         /*
          * Wait please
+         * (Change permission for the txt)
          */
+        $LogFile = fopen('log/request_log.txt', 'r+');
+        $LogFileData = fgets($LogFile);
+        fputs($LogFile, $LogFileData.';'.base64_encode($_SERVER['REMOTE_ADDR']));
+        fclose($LogFile);
     }
 
+    public function LOG_OPEN(){
+        /*
+         * Wait please
+         */
+    }
 }
