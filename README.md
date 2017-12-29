@@ -10,7 +10,7 @@ HOW TO USE
 __construct (OPTIONAL)
 
     SCS (The system) : default true
-    HTTPS (HTTPS FORCE CHECK) : default false
+    HTTPS (HTTPS FORCE CHECK) : default false (Potential Bug)
     LOG (LOG IP) : default false
     COUNTRY (COUNTRY BLOCK) : default false (You can block a country)
 
