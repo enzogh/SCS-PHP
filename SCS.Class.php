@@ -3,7 +3,7 @@ class SCS{
 
     private $SCS_CONFIG;
 
-    public function __construct($SCS = true, $https = false, $log = false, $country = false, $config = false){
+    public function __construct($SCS = true, $https = false, $log = false, $country = false, $defcode = false, $config = false){
         /*
          * Currently in dev
          */
@@ -21,6 +21,10 @@ class SCS{
                 $this->CHECKING_COUNTRY();
             }
 
+            if($defcode){
+                $this->SYSTEM_DEFCODE();
+            }
+
             if($config != false && is_array($config)){
                 $this->SCS_CONFIG = $config;
             }
@@ -31,6 +35,47 @@ class SCS{
     private function HTTPS_REDIRECT(){
         if(empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off"){
             header('Location: https://'.$_SERVER['SERVER_NAME']);
+        }
+    }
+
+    private function SYSTEM_DEFCODE($DEFCODE = 3){
+        /*
+         * 1 - CHECKING USER AGENT
+         * 2 - SEND ALL REQUEST TO A API
+         * 3 - TRACE CLIENT WITH ALL WEBSITE USING [SCS]
+         *
+         * Default on 3
+         *
+         * (dev in progress don't touch and don't set to true)
+         */
+        $DEFCODE_API = 'https://drm.garryhost.com/stacktrace.php';
+        $DEFCODE_CLIENT = array(
+            'IP'            => $this->LOOKUP_PROXY(),
+            'USER_AGENT'    => $_SERVER['HTTP_USER_AGENT'],
+        );
+
+        if($DEFCODE == 1){
+            if(strpos(strtolower($DEFCODE_CLIENT['USER_AGENT']), 'bot') !== false){
+                die('<center><b>[SCS] - Country Blocked</b></center>');
+            }
+        } elseif($DEFCODE == 2) {
+            /*
+             * HERE ALL THE DATA ARE SEND TO A API
+             */
+        } elseif($DEFCODE == 3) {
+            /*
+             * HERE ALL THE DATA ARE SEND TO A API
+             */
+        }
+    }
+
+    private function LOOKUP_PROXY(){
+        if(isset($_SERVER['HTTP_CLIENT_IP'])){
+            return $_SERVER['HTTP_CLIENT_IP'];
+        } elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            return $_SERVER['REMOTE_ADDR'];
         }
     }
 
