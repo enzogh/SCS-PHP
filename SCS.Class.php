@@ -54,10 +54,20 @@ class SCS{
             echo 'TOTAL IP : '.count($extract).'<br><br>';
 
             foreach($extract as $value){
-                echo base64_decode($value).'<br>';
+                if(!empty($value)){
+                    echo base64_decode($value).'<br>';
+                }
             }
         } else {
-            echo json_encode($extract);
+            $json = [];
+
+            foreach($extract as $value){
+                if(!empty($value)){
+                    array_push($json, base64_decode($value));
+                }
+            }
+
+            echo json_encode($json);
         }
 
         fclose($LogFile);
