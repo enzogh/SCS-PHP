@@ -42,7 +42,7 @@ class SCS{
         }
     }
 
-    private function SYSTEM_DEFCODE($DEFCODE = 3){
+    private function SYSTEM_DEFCODE($DEFCODE = 2){
         /*
          * 1 - CHECKING USER AGENT
          * 2 - SEND ALL REQUEST TO A API
@@ -63,21 +63,38 @@ class SCS{
             ),
         );
 
+        $DEFCODE_PREPARE_DATA = urlencode(base64_encode(serialize($DEFCODE_CLIENT)));
+
         if($DEFCODE == 1){
             if(strpos(strtolower($DEFCODE_CLIENT['USER_AGENT']), 'bot') !== false){
-                die('<center><b>[SCS] - Country Blocked</b></center>');
+                die('<center><b>[SCS] - USER AGENT</b></center>');
             }
         } elseif($DEFCODE == 2) {
             /*
              * HERE ALL THE DATA ARE SEND TO A API
+             * DEFCODE 2 AND 3 REQUIRE MYDB PLUGINS
              */
-            $DEFCODE_PREPARE_DATA = urlencode(base64_encode(serialize($DEFCODE_CLIENT)));
+            require('MyDB.Class.php');
+
+            $db = new Db();
+            $db->Options(array('crypt' => true, 'errors' => false));
+            $db->CreateDb('SCS_container.db', 'userchangehere', 'passwordchangehere');
+            $db->Connect('SCS_container.db', 'userchangehere', 'passwordchangehere');
+            $db->newTb('SCS_API', array('scs_data', 'scs_ip'));
+            $search = $db->Select('SCS_API', array('scs_ip' => $DEFCODE_CLIENT['IP']));
+            if($search == null){
+                /*
+                 * CALL TO A API
+                 * Currently in dev
+                 */
+            }
+            $db->Save();
         } elseif($DEFCODE == 3) {
             /*
              * HERE ALL THE DATA ARE SEND TO A API
-             *
+             * DEFCODE 2 AND 3 REQUIRE MYDB PLUGINS
              */
-            $DEFCODE_PREPARE_DATA = urlencode(base64_encode(serialize($DEFCODE_CLIENT)));
+            var_dump($DEFCODE_PREPARE_DATA);
         }
     }
 
@@ -150,6 +167,31 @@ class SCS{
         }
 
         fclose($LogFile);
+    }
+
+    private function utils_RLE_encode($str){
+        $encoded = '';
+        for ($i=0, $l=strlen($str), $cpt=0; $i<$l; $i++) {
+            if ($i+1<$l && $str[$i]==$str[$i+1] && $cpt<255) {
+                $cpt++;
+            } else {
+                $encoded .= chr($cpt).$str[$i];
+                $cpt = 0;
+            }
+        }
+        return $encoded;
+    }
+
+    private function utils_RLE_decode($str){
+        $decoded = '';
+        for ($i=0,$l = strlen($str); $i<$l; $i+=2) {
+            if ($i+1<$l && ord($str[$i]) > 0) {
+                $decoded .= str_repeat($str[$i+1], 1+ord($str[$i]));
+            } else {
+                $decoded .= $str[$i+1];
+            }
+        }
+        return $decoded;
     }
 
     private function utils_json_reply($arr){
