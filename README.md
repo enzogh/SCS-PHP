@@ -15,4 +15,6 @@ __construct (OPTIONAL)
     COUNTRY (COUNTRY BLOCK) : default false (You can block a country)
 
 
+(DEFCODE 2 & 3 only work with mydb plugin an alternative will be released soon) 
+
 Created By Enzo Poker 🔢
